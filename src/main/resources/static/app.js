@@ -10,7 +10,7 @@ var app = (function () {
     var stompClient = null;
     var theMessage = null;
 
-    var addPointToCanvas = function (point) {        
+    var addPointToCanvas = function (point) {   
         var canvas = document.getElementById("canvas");
         var ctx = canvas.getContext("2d");
         ctx.beginPath();
@@ -33,6 +33,8 @@ var app = (function () {
         console.info('Connecting to WS...');
         var socket = new SockJS('/stompendpoint');
         stompClient = Stomp.over(socket);
+        let x = null;
+        let y = null;
         
         //subscribe to /topic/newpoint when connections succeed
         stompClient.connect({}, function (frame) {
@@ -40,31 +42,33 @@ var app = (function () {
             stompClient.subscribe('/topic/newpoint', function (eventbody) {
                 alert('Suscribed sucessfully: ' + eventbody.body);
                 theMessage=JSON.parse(eventbody.body); // Variable global
+                console.log("Antes");
+                addPointToCanvas(theMessage);
+                console.log("Despues");
             });
         });
     };
 
-    var publishPoint = function (pt) {
-        stompClient.send("/topic/newpoint", {}, JSON.stringify(pt)); 
+    var publishPoint = function(px,py){
+        var pt=new Point(px,py);
+        console.info("publishing point at "+pt);
+        addPointToCanvas(pt);
+        //publicar el evento
+        stompClient.send("/topic/newpoint", {}, JSON.stringify(pt));
     };
     
-
     return {
 
         init: function () {
             var can = document.getElementById("canvas");
+            document.getElementById("Send point").addEventListener("click", function () {
+                x = document.getElementById("x").value;
+                y = document.getElementById("y").value;
+                publishPoint(x,y);
+            });
             //websocket connection
             connectAndSubscribe();
         },
-
-        publishPoint: function(px,py){
-            var pt=new Point(px,py);
-            console.info("publishing point at "+pt);
-            addPointToCanvas(pt);
-            //publicar el evento
-            publishPoint(pt);
-        },
-
         disconnect: function () {
             if (stompClient !== null) {
                 stompClient.disconnect();
