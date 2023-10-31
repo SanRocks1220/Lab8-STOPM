@@ -18,7 +18,18 @@ var app = (function () {
         ctx.stroke();
     };
     
-    
+    function captureClickEvent() {
+        var canvas = document.getElementById("canvas");
+
+        canvas.addEventListener("click", function (event) {
+            if (canvas.getAttribute("data-selected-canvas") === "true") {
+                var x = event.clientX - canvas.getBoundingClientRect().left;
+                var y = event.clientY - canvas.getBoundingClientRect().top;
+                publishPoint(x,y);
+            }
+        });
+    }
+
     var getMousePosition = function (evt) {
         canvas = document.getElementById("canvas");
         var rect = canvas.getBoundingClientRect();
@@ -40,7 +51,7 @@ var app = (function () {
         stompClient.connect({}, function (frame) {
             console.log('Connected: ' + frame);
             stompClient.subscribe('/topic/newpoint', function (eventbody) {
-                alert('Suscribed sucessfully: ' + eventbody.body);
+                // alert('Suscribed sucessfully: ' + eventbody.body);
                 theMessage=JSON.parse(eventbody.body); // Variable global
                 console.log("Antes");
                 addPointToCanvas(theMessage);
@@ -61,11 +72,18 @@ var app = (function () {
 
         init: function () {
             var can = document.getElementById("canvas");
+
             document.getElementById("Send point").addEventListener("click", function () {
                 x = document.getElementById("x").value;
                 y = document.getElementById("y").value;
                 publishPoint(x,y);
             });
+
+            canvas.setAttribute("data-selected-canvas", "false");
+            canvas.addEventListener("click", function () {
+                canvas.setAttribute("data-selected-canvas", "true");
+            });
+            captureClickEvent();
             //websocket connection
             connectAndSubscribe();
         },
