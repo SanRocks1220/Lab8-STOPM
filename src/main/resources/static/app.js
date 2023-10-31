@@ -9,6 +9,7 @@ var app = (function () {
     
     var stompClient = null;
     var theMessage = null;
+    var currentNumber = null;
 
     var addPointToCanvas = function (point) {   
         var canvas = document.getElementById("canvas");
@@ -39,7 +40,7 @@ var app = (function () {
         };
     };
 
-
+    // Parte 2
     var connectAndSubscribe = function () {
         console.info('Connecting to WS...');
         var socket = new SockJS('/stompendpoint');
@@ -60,23 +61,47 @@ var app = (function () {
         });
     };
 
+    // Parte 3
+    var connectAndSubscribe = function (number) {
+        currentNumber = number;
+        console.info('Connecting to WS...');
+        var socket = new SockJS('/stompendpoint');
+        stompClient = Stomp.over(socket);
+        
+        //subscribe to /topic/newpoint when connections succeed
+        stompClient.connect({}, function (frame) {
+            console.log('Connected: ' + frame);
+            stompClient.subscribe('/topic/newpoint.' + number, function (eventbody) {
+                // alert('Suscribed sucessfully: ' + eventbody.body);
+                theMessage=JSON.parse(eventbody.body); // Variable global
+                addPointToCanvas(theMessage);
+            });
+        });
+    };
+
     var publishPoint = function(px,py){
         var pt=new Point(px,py);
         console.info("publishing point at "+pt);
         addPointToCanvas(pt);
         //publicar el evento
-        stompClient.send("/topic/newpoint", {}, JSON.stringify(pt));
+        stompClient.send("/topic/newpoint." + currentNumber, {}, JSON.stringify(pt));
     };
     
     return {
 
         init: function () {
             var can = document.getElementById("canvas");
-
+            
+            // Parte 2
             document.getElementById("Send point").addEventListener("click", function () {
                 x = document.getElementById("x").value;
                 y = document.getElementById("y").value;
                 publishPoint(x,y);
+            });
+             // Parte 3
+            document.getElementById("Conectarse").addEventListener("click", function () {
+                number = document.getElementById("number").value;
+                connectAndSubscribe(number);
             });
 
             canvas.setAttribute("data-selected-canvas", "false");
@@ -85,7 +110,7 @@ var app = (function () {
             });
             captureClickEvent();
             //websocket connection
-            connectAndSubscribe();
+            // connectAndSubscribe();
         },
         disconnect: function () {
             if (stompClient !== null) {
