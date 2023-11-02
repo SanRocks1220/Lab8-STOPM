@@ -34,7 +34,7 @@ public class CollabPaintWebSocketConfig extends AbstractWebSocketMessageBrokerCo
 
     public void configureMessageBroker(MessageBrokerRegistry config) {
         config.enableSimpleBroker("/topic");
-        config.setApplicationDestinationPrefixes("/app");        
+        config.setApplicationDestinationPrefixes("/app");
     }
 
     public void registerStompEndpoints(StompEndpointRegistry registry) {
