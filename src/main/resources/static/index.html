@@ -15,7 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<html>
+<!-- <html>
     <head>
         <title>Collab Paint</title>
         <meta charset="UTF-8">
@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <script src="/webjars/sockjs-client/sockjs.min.js"></script>
         <script src="/webjars/stomp-websocket/stomp.min.js"></script>
         <script src="/app.js"></script>
+        <link rel="stylesheet" type="text/css" href="styles.css">
 
     </head>
     
@@ -35,4 +36,50 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <button id="Send point" hidden="hidden">Send point</button>
         <canvas id="canvas" width="800" height="600"></canvas>
     </body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Collab Paint</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Enlace al archivo CSS personalizado -->
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script src="/app.js"></script>
+</head>
+
+<body onload="app.init()">
+    <header>
+        <h1>Collab Paint</h1>
+    </header>
+
+    <div id="controls">
+        <div class="control-group" hidden="hidden">
+            <label for="x">X:</label>
+            <input id="x" type="number" hidden="hidden"/>
+        </div>
+
+        <div class="control-group" hidden="hidden">
+            <label for="y">Y:</label>
+            <input id="y" type="number" hidden="hidden"/>
+        </div>
+
+        <div class="control-group">
+            <label for="number">Number:</label>
+            <input id="number" type="number"/>
+        </div>
+
+        <button id="Conectarse">Conectarse</button>
+        <button id="Send point" hidden="hidden">Send point</button>
+    </div>
+
+    <div id="canvas-container">
+        <canvas id="canvas" width="800" height="600"></canvas>
+    </div>
+</body>
 </html>
