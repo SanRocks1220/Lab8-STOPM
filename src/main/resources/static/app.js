@@ -18,7 +18,15 @@ var app = (function () {
         ctx.beginPath();
         ctx.arc(point.x, point.y, 3, 0, 2 * Math.PI);
         ctx.stroke();
-        polygonToDraw.push(point)
+
+        console.log("Adding point...");
+        console.log(point);
+
+        console.log("Actual Polygon");
+        console.log(polygonToDraw);
+
+        polygonToDraw.push(point);
+
     };
 
     function captureClickEvent() {
@@ -61,12 +69,9 @@ var app = (function () {
             // Suscribirse a /topic/newpolygon
             stompClient.subscribe("/topic/newpolygon." + number, function (eventbody) {
                 theMessage = JSON.parse(eventbody.body);   
-                
-                console.log("polygonToDraw");
-                console.log(polygonToDraw);
-
-                drawPolygon(polygonToDraw);
-                polygonToDraw = []
+                console.log("theMessage");
+                console.log(theMessage);
+                drawPolygon(theMessage);
             });
         });
     };
@@ -89,13 +94,9 @@ var app = (function () {
         console.info("publishing point at " + pt);
         addPointToCanvas(pt);
 
-        console.log("Este es el buffer")
-        console.log(pointsBuffer)
-        console.log("este es el codigo bien hecho de polygonToDraw")
-        console.log(polygonToDraw)
-
         pointsBuffer.push(pt);
-        if (polygonToDraw.length%7 == 0) {
+
+        if (pointsBuffer.length%4 == 0) {
             stompClient.send("/topic/newpolygon." + currentNumber, {}, JSON.stringify(pointsBuffer));
             pointsBuffer = []
         } else {
