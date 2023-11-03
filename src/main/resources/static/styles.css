@@ -1,1 +1,47 @@
+body {
+    background-color: #f8dbdb;
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
 
+canvas {
+    border: 2px solid #333;
+    background-color: white;
+    cursor: crosshair;
+}
+
+input[type="number"] {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin: 5px;
+}
+
+button {
+    background-color: #b3cde7;
+    color: #000000;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#Conectarse {
+    background-color: #f19f9f;
+}
+
+#Conectarse:hover {
+    background-color: rgb(240, 97, 97);
+}
+
+#Send {
+    background-color: #ffc107;
+}
+
+#Send:hover {
+    background-color: #d39e00;
+}
