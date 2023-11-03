@@ -10,7 +10,7 @@ var app = (function () {
     var theMessage = null;
     var currentNumber = null;
     var pointsBuffer = [];
-    var mateo = [];
+    var polygonToDraw = [];
 
     var addPointToCanvas = function (point) {
         var canvas = document.getElementById("canvas");
@@ -18,7 +18,7 @@ var app = (function () {
         ctx.beginPath();
         ctx.arc(point.x, point.y, 3, 0, 2 * Math.PI);
         ctx.stroke();
-        mateo.push(point)
+        polygonToDraw.push(point)
     };
 
     function captureClickEvent() {
@@ -44,7 +44,7 @@ var app = (function () {
 
     // Conectar y suscribirse a los canales de WebSocket
     var connectAndSubscribe = function (number) {
-        currentNumber = number;
+        currentNumber = number;polygonToDraw
         console.info("Connecting to WS...");
         var socket = new SockJS("/stompendpoint");
         stompClient = Stomp.over(socket);
@@ -60,8 +60,13 @@ var app = (function () {
 
             // Suscribirse a /topic/newpolygon
             stompClient.subscribe("/topic/newpolygon." + number, function (eventbody) {
-                theMessage = JSON.parse(eventbody.body);    
-                drawPolygon(mateo);
+                theMessage = JSON.parse(eventbody.body);   
+                
+                console.log("polygonToDraw");
+                console.log(polygonToDraw);
+
+                drawPolygon(polygonToDraw);
+                polygonToDraw = []
             });
         });
     };
@@ -86,12 +91,13 @@ var app = (function () {
 
         console.log("Este es el buffer")
         console.log(pointsBuffer)
-        console.log("este es el codigo bien hecho de Mateo")
-        console.log(mateo)
+        console.log("este es el codigo bien hecho de polygonToDraw")
+        console.log(polygonToDraw)
 
         pointsBuffer.push(pt);
-        if (pointsBuffer.length >= 3) {
+        if (polygonToDraw.length%7 == 0) {
             stompClient.send("/topic/newpolygon." + currentNumber, {}, JSON.stringify(pointsBuffer));
+            pointsBuffer = []
         } else {
             stompClient.send("/topic/newpoint." + currentNumber, {}, JSON.stringify(pt));
         }
